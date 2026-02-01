@@ -1,0 +1,13 @@
+{
+  "slug": "your-nation-slug",
+  "token": "YOUR_API_TOKEN",
+  "prefixes": [
+    "Department:",
+    "Job:",
+    "Location:",
+    "Region:",
+    "Status:",
+    "OldTag:"
+  ],
+  "delete_all": false
+}
