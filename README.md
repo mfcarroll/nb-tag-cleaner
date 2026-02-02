@@ -6,10 +6,22 @@ This tool is designed to bulk-delete tags from a NationBuilder instance based on
 
 The application uses a configuration file to manage settings such as your API credentials and target prefixes.
 
-### Creating the Config File
+### 1. Generating a NationBuilder Developer API Token
 
-1. Create a file named `config.json` in the root directory of the project.
-2. Use the structure below as a template:
+To use this tool, you need a "Test Token" from NationBuilder. This is a short-lived key (expires in 24 hours) ideal for running specific cleanup tasks.
+
+1.  Log in to your NationBuilder admin panel.
+2.  Navigate to **Settings** > **Developer** > **API testing**.
+3.  Click **New API token**
+4.  Copy the token string provided (**▼** > **Copy token** ).
+5.  Paste this token into your `config.json` file (see below).
+
+Note that the token allows admin access to your NationBuilder account and should be protected carefully.
+
+### 2. Creating the Config File
+
+1.  Create a file named `config.json` in the root directory of the project.
+2.  Use the structure below as a template:
 
 ```json
 {
@@ -27,7 +39,7 @@ The application uses a configuration file to manage settings such as your API cr
 }
 ```
 
-**Security Note:** Ensure `config.json` is added to your `.gitignore` file so sensitive keys (like your API token) are not committed to version control.
+**Security Note:** Ensure `config.json` is added to your `.gitignore` file so sensitive keys are not committed to version control.
 
 ---
 
@@ -44,20 +56,20 @@ The application uses a configuration file to manage settings such as your API cr
 Clone the repository and navigate to the project folder:
 
 ```bash
-git clone [https://github.com/yourusername/your-repo.git](https://github.com/yourusername/your-repo.git)
-cd your-repo
+git clone https://github.com/mfcarroll/nb-tag-cleaner.git
+cd nb-tag-cleaner
 ```
 
 Create and activate a virtual environment:
 
 - **Windows:**
   ```bash
-  python -m venv venv
-  venv\Scripts\activate
+  python -m venv .venv
+  .venv\Scripts\activate
   ```
 - **macOS/Linux:**
   ```bash
-  python3 -m venv venv
+  python3 -m venv .venv
   source venv/bin/activate
   ```
 
@@ -100,11 +112,11 @@ The recommended way to deploy to PythonAnywhere is to host your code on GitHub a
 
     ```bash
     # Clone your repository
-    git clone [https://github.com/yourusername/your-repo.git](https://github.com/yourusername/your-repo.git)
-    cd your-repo
+    git clone https://github.com/mfcarroll/nb-tag-cleaner.git
+    cd nb-tag-cleaner
 
-    # Create and activate a virtual environment (PA specific command)
-    mkvirtualenv --python=/usr/bin/python3.10 my-venv
+    # Create and activate a virtual environment
+    python3 -m venv .venv
 
     # Install dependencies
     pip install -r requirements.txt
@@ -117,7 +129,7 @@ When you make changes on your local machine:
 1.  Push changes to GitHub (`git push`).
 2.  Go to your PythonAnywhere console and pull the changes:
     ```bash
-    cd your-repo
+    cd nb-tag-cleaner
     git pull origin main
     ```
 
@@ -125,7 +137,7 @@ When you make changes on your local machine:
 
 ## 🚀 Running on PythonAnywhere
 
-Since this script requires user confirmation (typing "yes") before deleting tags, it is designed to be run interactively.
+This script is designed to be run interactively.
 
 ### Interactive Console Mode
 
@@ -135,8 +147,8 @@ Use this mode to interact with the script directly via the command line.
 2.  Start a **Bash** console.
 3.  Activate your virtual environment and run the script:
     ```bash
-    workon my-venv
-    cd your-repo
+    cd nb-tag-cleaner
+    source .venv/bin/activate
     python nb_tag_cleaner.py --config config.json
     ```
 
