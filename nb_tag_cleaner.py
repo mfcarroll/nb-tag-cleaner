@@ -119,10 +119,15 @@ class NationBuilderCleanerV2:
             return
 
         # 3. Confirmation
+        # Sort so tags with a ':' are grouped first, then alphabetically.
+        tags_to_delete = sorted(
+            tags_to_delete, key=lambda x: (":" not in x["name"], x["name"].casefold())
+        )
+
         print(f"\n{Fore.WHITE}Found {len(tags_to_delete)} tags matching criteria:")
         print(f"{Fore.WHITE}------------------------------------------------")
-        for tag in tags_to_delete:
-            print(f"{Fore.RED}- {tag['name']} {Fore.BLACK}(ID: {tag['id']})")
+        for index, tag in enumerate(tags_to_delete, start=1):
+            print(f"{Fore.RED}{index}. {tag['name']} {Fore.BLACK}(ID: {tag['id']})")
         print(f"{Fore.WHITE}------------------------------------------------")
 
         if self.dry_run:
