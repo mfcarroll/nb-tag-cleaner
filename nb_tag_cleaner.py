@@ -183,6 +183,11 @@ if __name__ == "__main__":
         action="store_true",
         help="Simulate deletion without making changes",
     )
+    parser.add_argument(
+        "--list-all",
+        action="store_true",
+        help="Fetch and display all current tags without deleting anything",
+    )
 
     args = parser.parse_args()
 
@@ -222,17 +227,43 @@ if __name__ == "__main__":
     print(f"\n{Fore.WHITE}=== Configuration Loaded ===")
     print(f"{Fore.BLUE}Nation Slug:   {Fore.WHITE}{slug}")
     print(f"{Fore.BLUE}Token:         {Fore.WHITE}{token[:4]}...{token[-4:]} (Masked)")
-    print(
-        f"{Fore.BLUE}Mode:          {Fore.YELLOW if args.dry_run else Fore.RED}{'DRY RUN (Simulation)' if args.dry_run else 'LIVE EXECUTION'}"
-    )
 
-    if delete_all:
-        print(f"{Fore.RED}Target:        ALL TAGS (Dangerous!)")
+    if args.list_all:
+        print(f"{Fore.BLUE}Mode:          {Fore.CYAN}LIST ALL TAGS")
     else:
-        print(f"{Fore.BLUE}Prefix Source: {Fore.WHITE}{prefix_source}")
-        print(f"{Fore.BLUE}Prefixes:      {Fore.WHITE}{prefixes}")
+        print(
+            f"{Fore.BLUE}Mode:          {Fore.YELLOW if args.dry_run else Fore.RED}{'DRY RUN (Simulation)' if args.dry_run else 'LIVE EXECUTION'}"
+        )
+        if delete_all:
+            print(f"{Fore.RED}Target:        ALL TAGS (Dangerous!)")
+        else:
+            print(f"{Fore.BLUE}Prefix Source: {Fore.WHITE}{prefix_source}")
+            print(f"{Fore.BLUE}Prefixes:      {Fore.WHITE}{prefixes}")
+
     print(f"{Fore.WHITE}============================\n")
     # ----------------------
 
     cleaner = NationBuilderCleanerV2(slug, token, dry_run=args.dry_run)
+
+    # If the user just wants to view the tags, display them and exit safely
+    if args.list_all:
+        all_tags = cleaner.get_all_tags()
+        if not all_tags:
+            print(f"{Fore.YELLOW}No tags found or access denied.")
+        else:
+            # Sort the tags alphabetically for easier reading
+            all_tags = sorted(
+                all_tags, key=lambda x: (":" not in x["name"], x["name"].casefold())
+            )
+
+            print(f"\n{Fore.WHITE}Found {len(all_tags)} total tags:")
+            print(f"{Fore.WHITE}------------------------------------------------")
+            for index, tag in enumerate(all_tags, start=1):
+                print(
+                    f"{Fore.CYAN}{index}. {tag['name']} {Fore.BLACK}(ID: {tag['id']})"
+                )
+            print(f"{Fore.WHITE}------------------------------------------------")
+        sys.exit(0)
+
+    # Otherwise, proceed with the normal deletion logic
     cleaner.run(prefixes, delete_all)
